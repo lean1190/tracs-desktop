@@ -1,0 +1,15 @@
+<div class="list-group patients-list">
+    <a href="#" class="list-group-item" ng-repeat="profile in vm.profiles track by $index" ui-sref="main.detail({ id:'{{::vm.patient._id}}' })">
+            <div class="item">
+                <div class="image-wrapper pull-left">
+                    <img ng-src="{{::profile.patient.picture}}" alt="{{::profile.patient.name }}">
+                </div>
+                <div class="content-wrapper pull-left">
+                    <div class="name">{{::profile.patient.name}}</div>
+                    <div class="description">{{::profile.patient.generalDescription}}</div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+    </a>
+    <div class="clearfix"></div>
+</div>

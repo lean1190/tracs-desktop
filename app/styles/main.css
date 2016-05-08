@@ -1,0 +1,162 @@
+html,
+body {
+    height: 100%;
+}
+
+.container {
+    margin-top: 15px;
+}
+
+.navbar {
+    background-color: #119387;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.26);
+    border: none;
+}
+
+.navbar-toggle {
+    float: left;
+    margin-left: 15px;
+    border: none;
+    background-color: #119387;
+}
+
+.navbar-toggle:hover, .navbar-toggle:focus {
+    background-color: #119387 !important;
+}
+
+.navbar-toggle span {
+    background-color: white !important;
+}
+
+.navmenu {
+    z-index: 1;
+    background-color: white;
+}
+
+.navmenu-brand {
+    border-bottom: 1px solid #eee;
+    margin-top: 0;
+    height: 100px;
+    background-image: url('../images/menu-background.jpg');
+    background-size: cover;
+    color: white !important;
+}
+
+.navmenu-nav li {
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.navmenu-nav li a {
+    display: inline-block;
+    font-size: 17px;
+}
+
+.navmenu-nav li img {
+    width: 30px;
+    margin-left: 15px;
+}
+
+.canvas {
+    position: relative;
+    left: 0;
+    z-index: 2;
+    min-height: 100%;
+    padding: 50px 0 0 0;
+    background: #fff;
+}
+
+@media (min-width: 0) {
+    .navbar-toggle {
+        display: block;
+        /* force showing the toggle */
+    }
+}
+
+@media (min-width: 992px) {
+}
+
+/* ****************************** */
+
+.patients-list {
+}
+
+.patients-list a {
+    border-radius: 0 !important;
+}
+
+.patients-list a .image {
+    width: 65px;
+    height: 65px;
+    border-radius: 100%;
+}
+
+.patients-list a .image img {
+    width: 100%;
+    height: 100%;
+}
+
+.patients-list a .content {
+    float: left;
+    margin-left: 15px;
+}
+
+.patients-list .item .content-wrapper {
+    margin-left: 10px;
+    width: 69%;
+}
+
+.patients-list .item .content-wrapper .name {
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.patients-list .item .content-wrapper .description {
+    font-size: 15px;
+    color: #717171;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    height: 40px;
+}
+
+.patients-list .item .image-wrapper {
+    width: 85px;
+    height: 85px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 100%;
+}
+
+.patients-list .item .image-wrapper img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 100%;
+    width: auto;
+    -webkit-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+}
+
+/*
+.image-wrapper {
+    width: 85px;
+    height: 85px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 100%;
+
+    img {
+        @include img-contained-with-radius(100%);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        height: 100%;
+        width: auto;
+        -webkit-transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+        transform: translate(-50%,-50%);
+    }
+}
+*/
