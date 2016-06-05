@@ -1,11 +1,3 @@
-/**
- * @ngdoc function
- * @name tracsDesktopApp.controller:AboutCtrl
- * @description
- * # AboutCtrl
- * Controller of the tracsDesktopApp
- */
-
 (function () {
     "use strict";
 
@@ -20,7 +12,7 @@
         // Mock de usuario hasta que tengamos el login
         storage.setUser({
             // hay q poner uno de la base para que traiga algo, paja mockear todos los pacientes
-            _id: "56fff620e56cb4da123dba1e"
+            _id: "5750bd31a38ae0b91d6ee10c"
         });
 
         var vm = this,
@@ -31,7 +23,6 @@
 
         function activate() {
             $http.get(patientEndpoint + "/user/" + userId).then(function (result) {
-                console.log("### Patients", result.data)
                 vm.profiles = result.data;
             }, function (error) {
                 $log.error("Ocurrió un error al recuperar los pacientes del usuario con id " + userId, error);

@@ -1,11 +1,3 @@
-/**
- * @ngdoc function
- * @name tracsDesktopApp.controller:MainCtrl
- * @description
- * # MainCtrl
- * Controller of the tracsDesktopApp
- */
-
 (function () {
     "use strict";
 

@@ -48,7 +48,13 @@ angular
         .state("main.detail", {
             url: "/detail/:id",
             templateUrl: "views/detail.html",
-            //controller: "PatientsListController as vm"
+            controller: "PatientDetailController as vm"
+        })
+
+        .state("main.newPrivateReport", {
+            url: "/reports/new/private",
+            templateUrl: "views/reports/new-private.html",
+            controller: "CreatePrivateReportController as vm"
         });
 
         $urlRouterProvider.otherwise("/login");

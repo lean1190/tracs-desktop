@@ -30,8 +30,6 @@
         var service = {
             getUser: getUser,
             setUser: setUser,
-            getPatientUser: getPatientUser,
-            setPatientUser: setPatientUser,
             getLastVisitedPatient: getLastVisitedPatient,
             setLastVisitedPatient: setLastVisitedPatient
         };
@@ -52,14 +50,6 @@
 
         function setLastVisitedPatient(lastVisitedPatient) {
             return localStorageService.set(LAST_VISITED_PATIENT_KEY, lastVisitedPatient);
-        }
-
-        function getPatientUser() {
-            return localStorageService.get(PATIENT_USER_KEY);
-        }
-
-        function setPatientUser(patientUser) {
-            return localStorageService.set(PATIENT_USER_KEY, patientUser);
         }
 
     }
