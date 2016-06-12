@@ -5,12 +5,12 @@
         .module("tracsDesktopApp")
         .controller("PatientDetailController", PatientDetailController);
 
-    PatientDetailController.$inject = ["$stateParams", "$http", "$log", "storage"];
+    PatientDetailController.$inject = ["$stateParams", "$http", "$log", "storage", "environment"];
 
-    function PatientDetailController($stateParams, $http, $log, storage) {
+    function PatientDetailController($stateParams, $http, $log, storage, environment) {
 
         var vm = this,
-            patientEndpoint = "http://localhost:3000/patient",
+            patientEndpoint = environment.api + "/patient",
             patientId = $stateParams.id;
 
         vm.patient = {};

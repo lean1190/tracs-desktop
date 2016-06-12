@@ -19,6 +19,9 @@ angular
         "ui.router",
         "LocalStorageModule",
     ])
+    .constant("environment", {
+        api: "http://localhost:3000"
+    })
     .config(function ($stateProvider, $urlRouterProvider, localStorageServiceProvider) {
 
         // Configuración del prefijo para el localStorage

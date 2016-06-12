@@ -12,27 +12,27 @@
 <script type="text/javascript">
     // Your Client ID can be retrieved from your project in the Google
     // Developer Console, https://console.developers.google.com
-    var CLIENT_ID = '1017723616061-btjadg1pe5tug819i8b3sffek1klev6m.apps.googleusercontent.com';
+    /*var CLIENT_ID = '1017723616061-btjadg1pe5tug819i8b3sffek1klev6m.apps.googleusercontent.com';
 
-    var SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
+    var SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];*/
 
     /**
      * Check if current user has authorized this application.
      */
-    function checkAuth() {
+    /*function checkAuth() {
         gapi.auth.authorize({
             'client_id': CLIENT_ID,
             'scope': SCOPES.join(' '),
             'immediate': true
         }, handleAuthResult);
-    }
+    }*/
 
     /**
      * Handle response from authorization server.
      *
      * @param {Object} authResult Authorization result.
      */
-    function handleAuthResult(authResult) {
+    /*function handleAuthResult(authResult) {
         var authorizeDiv = document.getElementById('authorize-div');
         if (authResult && !authResult.error) {
             // Hide auth UI, then load client library.
@@ -43,14 +43,14 @@
             // clicking authorize button.
             authorizeDiv.style.display = 'inline';
         }
-    }
+    }*/
 
     /**
      * Initiate auth flow in response to user clicking authorize button.
      *
      * @param {Event} event Button click event.
      */
-    function handleAuthClick(event) {
+    /*function handleAuthClick(event) {
         gapi.auth.authorize({
                 client_id: CLIENT_ID,
                 scope: SCOPES,
@@ -58,14 +58,7 @@
             },
             handleAuthResult);
         return false;
-    }
-
-    /**
-     * Load Drive API client library.
-     */
-    function loadDriveApi() {
-        gapi.client.load('drive', 'v3', listFiles);
-    }
+    }*/
 
     /**
      * Print files.

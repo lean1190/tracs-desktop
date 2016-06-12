@@ -10,13 +10,19 @@
     function CreatePrivateReportController($stateParams, $http, $log, storage) {
 
         function activate() {
-            gapi.client.load('drive', 'v3').then(function(result) {
-                console.log("### result", result);
-            });
+
             /*$http.get(patientEndpoint + "/detail/" + patientId).then(function (result) {
             }, function (error) {
                 $log.error("Ocurrió un error al recuperar el detalle del usuario con id " + patientId, error);
             });*/
+            var request = gapi.client.drive.files.list({
+                                'pageSize': 10,
+                                'fields': "nextPageToken, files(id, name)"
+                            });
+
+                            request.execute(function (resp) {
+                                console.log("### list", resp);
+                            });
         }
 
         activate();

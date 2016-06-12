@@ -5,18 +5,12 @@
         .module("tracsDesktopApp")
         .controller("PatientsListController", PatientsListController);
 
-    PatientsListController.$inject = ["$http", "$log", "storage"];
+    PatientsListController.$inject = ["$http", "$log", "storage", "environment"];
 
-    function PatientsListController($http, $log, storage) {
-
-        // Mock de usuario hasta que tengamos el login
-        storage.setUser({
-            // hay q poner uno de la base para que traiga algo, paja mockear todos los pacientes
-            _id: "5750bd31a38ae0b91d6ee10c"
-        });
+    function PatientsListController($http, $log, storage, environment) {
 
         var vm = this,
-            patientEndpoint = "http://localhost:3000/patient",
+            patientEndpoint = environment.api + "/patient",
             userId = storage.getUser()._id;
 
         vm.profiles = [];
