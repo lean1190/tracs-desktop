@@ -11,11 +11,11 @@
 
         var vm = this;
 
-        var clientId = "1017723616061-btjadg1pe5tug819i8b3sffek1klev6m.apps.googleusercontent.com",
+        var clientId = environment.clientId,
             scopes = [
                 "https://www.googleapis.com/auth/plus.login",
                 "https://www.googleapis.com/auth/plus.me",
-                "https://www.googleapis.com/auth/drive.metadata.readonly"
+                "https://www.googleapis.com/auth/drive"
             ];
 
         /**
@@ -56,14 +56,6 @@
         }
 
         /**
-         * Carga la librería con el cliente de la API de Drive
-         * @returns {promise} una promesa cuando se terminó de cargar
-         */
-        function loadDriveApi() {
-            return gapi.client.load('drive', 'v3');
-        }
-
-        /**
          * Verifica si el usuario autorizó a la aplicación
          * a acceder a sus datos de Google
          * @returns {promise} una promesa con el resultado de la autorización
@@ -71,38 +63,33 @@
         function checkAuth() {
             return $q(function (resolve, reject) {
                 gapi.auth.authorize({
-                    "client_id": clientId,
-                    "scope": scopes.join(" "),
-                    "immediate": false
-                },
-                /**
-                 * Callback para manejar la invocación al servidor de autorización
-                 * @param {object} authResult el resultado de la autorización.
-                 */
-                function (authResult) {
-                    if (authResult && !authResult.error) {
-                        resolve(authResult);
-                    } else {
-                        reject("Authorization error");
-                    }
-                });
+                        "client_id": clientId,
+                        "scope": scopes.join(" "),
+                        "immediate": false
+                    },
+                    /**
+                     * Callback para manejar la invocación al servidor de autorización
+                     * @param {object} authResult el resultado de la autorización.
+                     */
+                    function (authResult) {
+                        if (authResult && !authResult.error) {
+                            resolve(authResult);
+                        } else {
+                            reject("Authorization error");
+                        }
+                    });
             });
         }
 
         vm.login = function () {
             checkAuth().then(function (authResult) {
-                // Setea la ApiKey para las invocaciones a la API de Google
-                gapi.client.setApiKey("AIzaSyA1HwfkxfuCLXVDjYrGyW_gPLW6CVfeV4w");
                 // Recupera los datos de perfil del usuario de Google
                 getGoogleUserProfile(authResult.access_token).then(function (googleProfile) {
                     // Recupera los datos del usuario desde el servidor
-                    getFulfilledUser(googleProfile, authResult.access_token).then(function(fullfilledUser) {
+                    getFulfilledUser(googleProfile, authResult.access_token).then(function (fullfilledUser) {
                         // Guarda el usuario logueado en el localStorage
                         storage.setUser(fullfilledUser);
-                        // Carga el cliente de la API de Drive
-                        loadDriveApi().then(function() {
-                            $state.go("main.patients");
-                        });
+                        $state.go("main.patients");
                     });
                 });
             });

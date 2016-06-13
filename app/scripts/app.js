@@ -20,7 +20,8 @@ angular
         "LocalStorageModule",
     ])
     .constant("environment", {
-        api: "http://localhost:3000"
+        api: "http://localhost:3000",
+        clientId: "1017723616061-btjadg1pe5tug819i8b3sffek1klev6m.apps.googleusercontent.com"
     })
     .config(function ($stateProvider, $urlRouterProvider, localStorageServiceProvider) {
 
@@ -30,7 +31,7 @@ angular
         // Configuración de estados y rutas
         $stateProvider
 
-        .state("login", {
+            .state("login", {
             url: "/login",
             templateUrl: "views/login.html",
             controller: "LoginController as vm"

@@ -11,8 +11,16 @@ body {
 
 .navbar {
     background-color: #119387;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.26);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
     border: none;
+    text-align: center;
+}
+
+.navbar-brand {
+    line-height: 50px;
+    color: white !important;
+    float: none;
+    margin-left: -50px;
 }
 
 .navbar-toggle {
@@ -22,7 +30,8 @@ body {
     background-color: #119387;
 }
 
-.navbar-toggle:hover, .navbar-toggle:focus {
+.navbar-toggle:hover,
+.navbar-toggle:focus {
     background-color: #119387 !important;
 }
 
@@ -75,13 +84,12 @@ body {
     }
 }
 
-@media (min-width: 992px) {
-}
+@media (min-width: 992px) {}
+
 
 /* ****************************** */
 
-.patients-list {
-}
+.patients-list {}
 
 .patients-list a {
     border-radius: 0 !important;
@@ -136,10 +144,18 @@ body {
     top: 50%;
     height: 100%;
     width: auto;
-    -webkit-transform: translate(-50%,-50%);
-    -ms-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
+
+
+/* HACKS */
+
+iframe[src^="https://apis.google.com"] {
+    display: none !important;
+}
+
 
 /*
 .image-wrapper {

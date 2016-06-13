@@ -5,9 +5,9 @@
         .module("tracsDesktopApp")
         .controller("PatientsListController", PatientsListController);
 
-    PatientsListController.$inject = ["$http", "$log", "storage", "environment"];
+    PatientsListController.$inject = ["$http", "$rootScope", "$log", "storage", "environment"];
 
-    function PatientsListController($http, $log, storage, environment) {
+    function PatientsListController($http, $rootScope, $log, storage, environment) {
 
         var vm = this,
             patientEndpoint = environment.api + "/patient",
@@ -16,6 +16,8 @@
         vm.profiles = [];
 
         function activate() {
+            $rootScope.pageTitle = "Mis pacientes";
+
             $http.get(patientEndpoint + "/user/" + userId).then(function (result) {
                 vm.profiles = result.data;
             }, function (error) {

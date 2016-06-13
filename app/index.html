@@ -18,13 +18,26 @@
     <!-- endbuild -->
 </head>
 
-<body ng-app="tracsDesktopApp">
+<!--<body ng-app="tracsDesktopApp">-->
+
+<body>
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <body>
         <ui-view></ui-view>
+
+        <script>
+            /**
+             * Arranca la aplicación una vez que todos los componentes
+             * que se descargan asincrónicamente están listos para ser
+             * usados
+             */
+            function bootstrapApp() {
+                angular.bootstrap(document, ["tracsDesktopApp"]);
+            }
+        </script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
         <script>
@@ -57,11 +70,12 @@
         <!-- endbuild -->
 
         <script src="https://apis.google.com/js/platform.js" async defer></script>
-        <script src="https://apis.google.com/js/client.js"></script>
+        <script src="https://apis.google.com/js/client.js?onload=bootstrapApp"></script>
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/helpers/storage.js"></script>
+        <script src="scripts/helpers/GapiHelper.js"></script>
         <script src="scripts/controllers/LoginController.js"></script>
         <script src="scripts/controllers/PatientsListController.js"></script>
         <script src="scripts/controllers/PatientDetailController.js"></script>
