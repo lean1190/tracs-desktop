@@ -149,11 +149,19 @@ body {
     transform: translate(-50%, -50%);
 }
 
+.docs-wrapper .col-md-6 {
+    padding: 0;
+}
 
 /* HACKS */
 
 iframe[src^="https://apis.google.com"] {
     display: none !important;
+}
+
+a.no-hover:hover, a.no-hover:active, a.no-hover:focus, a.no-hover:visited {
+    background-color: white;
+    cursor: default;
 }
 
 

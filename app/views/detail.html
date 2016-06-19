@@ -1,4 +1,43 @@
-<div>
-    <!-- TODO agregar tarjetita con información del paciente, como está en la app -->
-    <button class="btn btn-positive" ui-sref="main.newPrivateReport">AGREGAR INFORME PRIVADO</button>
+<div class="row">
+    <div class="list-group patients-list">
+        <a class="list-group-item no-hover" href="">
+            <div class="item">
+                <div class="image-wrapper pull-left">
+                    <img ng-src="{{::vm.patient.picture}}" alt="{{::vm.patient.name }}">
+                </div>
+                <div class="content-wrapper pull-left">
+                    <div class="name">{{::vm.patient.name}}</div>
+                    <div class="description">{{::vm.patient.latestDiagnosis.name}}</div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </a>
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+<div class="row docs-wrapper">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-10">
+               <h3>Informes privados</h3>
+                <div class="list-group patients-list">
+                    <a class="list-group-item no-hover" href="" ng-repeat="file in vm.patient.files track by $index">
+                        <div class="item">
+                            <div>{{file.name}}</div>
+                            <div>Creado el {{file.createdTime | date:"dd/MM/yyyy"}}</div>
+                            <div>Ultima modif {{file.modifiedTime | date:"dd/MM/yyyy"}} por {{file.lastModifyingUser.displayName}}</div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-positive" ui-sref="main.newPrivateReport">AGREGAR INFORME PRIVADO</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6"></div>
 </div>
