@@ -16,6 +16,7 @@
             patientFolderName = GapiHelper.getTracsFolderName();
 
         vm.patient = {};
+        vm.folderId = "";
 
         /**
          * Verifica si el usuario tiene en su drive una carpeta
@@ -52,6 +53,7 @@
                 patientFolderName += " - " + vm.patient.name;
 
                 checkAndCreatePatientFolder().then(function(folder) {
+                    vm.folderId = folder.id;
                     GapiHelper.getFolderFiles(folder.id).then(function(result) {
                         vm.patient.files = result.files;
                         console.log("### patient", vm.patient);

@@ -149,8 +149,44 @@ body {
     transform: translate(-50%, -50%);
 }
 
-.docs-wrapper .col-md-6 {
+.docs-wrapper .col-md-5 {
     padding: 0;
+}
+
+.docs-wrapper .docs-list-title {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.docs-wrapper .add-report-button {
+    padding: 5px 10px;
+    background-color: #F6ECF8;
+    font-size: 12px;
+    font-weight: bold;
+    color: #9B26AF;
+    border: 1px solid #9B26AF;
+    position: relative;
+    bottom: 3px;
+}
+
+.docs-wrapper .file-item {
+    cursor: pointer;
+}
+
+.docs-wrapper .file-item .name {
+    font-weight: 700;
+    font-size: 18px;
+
+}
+
+.docs-wrapper .file-item .last-modified {
+    font-size: 14px;
+    color: #b9b9b9;
+}
+
+.docs-wrapper .file-item .created-at {
+    font-size: 12px;
+    margin-top: 5px;
 }
 
 /* HACKS */

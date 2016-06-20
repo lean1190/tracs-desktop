@@ -23,7 +23,7 @@ angular
         api: "http://localhost:3000",
         clientId: "1017723616061-btjadg1pe5tug819i8b3sffek1klev6m.apps.googleusercontent.com"
     })
-    .config(function ($stateProvider, $urlRouterProvider, localStorageServiceProvider) {
+    .config(function($stateProvider, $urlRouterProvider, localStorageServiceProvider) {
 
         // Configuración del prefijo para el localStorage
         localStorageServiceProvider.setPrefix("tracs");
@@ -31,7 +31,7 @@ angular
         // Configuración de estados y rutas
         $stateProvider
 
-            .state("login", {
+        .state("login", {
             url: "/login",
             templateUrl: "views/login.html",
             controller: "LoginController as vm"
@@ -56,9 +56,15 @@ angular
         })
 
         .state("main.newPrivateReport", {
-            url: "/reports/new/private",
+            url: "/reports/new/private/:folderId",
             templateUrl: "views/reports/new-private.html",
             controller: "CreatePrivateReportController as vm"
+        })
+
+        .state("main.editPrivateReport", {
+            url: "/reports/edit/private/:fileId",
+            templateUrl: "views/reports/edit-private.html",
+            controller: "EditPrivateReportController as vm"
         });
 
         $urlRouterProvider.otherwise("/login");

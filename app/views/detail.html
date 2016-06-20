@@ -17,27 +17,37 @@
 </div>
 
 <div class="row docs-wrapper">
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-10">
-               <h3>Informes privados</h3>
-                <div class="list-group patients-list">
-                    <a class="list-group-item no-hover" href="" ng-repeat="file in vm.patient.files track by $index">
-                        <div class="item">
-                            <div>{{file.name}}</div>
-                            <div>Creado el {{file.createdTime | date:"dd/MM/yyyy"}}</div>
-                            <div>Ultima modif {{file.modifiedTime | date:"dd/MM/yyyy"}} por {{file.lastModifyingUser.displayName}}</div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </a>
+    <div class="col-md-5">
+        <h3 class="docs-list-title" ng-show="vm.patient.files.length > 0">Informes privados</h3>
+        <h3 class="docs-list-title" ng-show="!vm.patient.files.length">Aún no hay informes privados</h3>
+        <button class="add-report-button" ui-sref="main.newPrivateReport({folderId: vm.folderId})">Agregar</button>
+        <div class="list-group patients-list" ng-show="vm.patient.files.length > 0">
+            <a class="list-group-item no-hover" ng-repeat="file in vm.patient.files track by $index" ui-sref="main.editPrivateReport({fileId: file.id})">
+                <div class="item file-item">
+                    <div class="name">{{file.name}}</div>
+                    <div class="last-modified">Ultima modificación {{file.modifiedTime | date:"dd/MM/yyyy"}} por {{file.lastModifyingUser.displayName}}</div>
+                    <div class="created-at">Creado el {{file.createdTime | date:"dd/MM/yyyy"}}</div>
                     <div class="clearfix"></div>
                 </div>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-positive" ui-sref="main.newPrivateReport">AGREGAR INFORME PRIVADO</button>
-            </div>
+            </a>
+            <div class="clearfix"></div>
         </div>
     </div>
 
-    <div class="col-md-6"></div>
+    <div class="col-md-5 col-md-offset-2">
+        <h3 class="docs-list-title" ng-show="vm.patient.files.length > 0">Informes compartidos</h3>
+        <h3 class="docs-list-title" ng-show="!vm.patient.files.length">Aún no hay informes compartidos</h3>
+        <button class="add-report-button" ui-sref="main.newSharedReport">Agregar</button>
+        <div class="list-group patients-list" ng-show="vm.patient.files.length > 0">
+            <a class="list-group-item no-hover" ng-repeat="file in vm.patient.files track by $index" ui-sref="main.editPrivateReport({fileId: file.id})">
+                <div class="item file-item">
+                    <div class="name">{{file.name}}</div>
+                    <div class="last-modified">Ultima modificación {{file.modifiedTime | date:"dd/MM/yyyy"}} por {{file.lastModifyingUser.displayName}}</div>
+                    <div class="created-at">Creado el {{file.createdTime | date:"dd/MM/yyyy"}}</div>
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+            <div class="clearfix"></div>
+        </div>
+    </div>
 </div>
