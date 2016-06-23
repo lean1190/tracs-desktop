@@ -37,7 +37,7 @@
     <div class="col-md-5 col-md-offset-2">
         <h3 class="docs-list-title" ng-show="vm.patient.files.length > 0">Informes compartidos</h3>
         <h3 class="docs-list-title" ng-show="!vm.patient.files.length">Aún no hay informes compartidos</h3>
-        <button class="add-report-button" ui-sref="main.newSharedReport">Agregar</button>
+        <button class="add-report-button" ui-sref="main.newSharedReport({folderId: vm.folderId})">Agregar</button>
         <div class="list-group patients-list" ng-show="vm.patient.files.length > 0">
             <a class="list-group-item no-hover" ng-repeat="file in vm.patient.files track by $index" ui-sref="main.editPrivateReport({fileId: file.id})">
                 <div class="item file-item">
