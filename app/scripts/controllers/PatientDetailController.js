@@ -13,7 +13,7 @@
             patientEndpoint = environment.api + "/patient",
             diagnosisEndpoint = environment.api + "/diagnosis",
             patientId = $stateParams.id,
-            patientFolderName = GapiHelper.getTracsFolderName();
+            patientFolderName = GapiHelper.getTracsMainFolderName();
 
         vm.patient = {};
         vm.folderId = "";
@@ -44,13 +44,15 @@
 
                 $rootScope.pageTitle = vm.patient.name;
 
-                $http.get(diagnosisEndpoint + "/" + vm.patient.latestDiagnosis).then(function(resultDiagnosis) {
-                    vm.patient.latestDiagnosis = resultDiagnosis.data;
-                }, function(error) {
-                    $log.error("Ocurrió un error al recuperar el diagnóstico del paciente con id " + patientId, error);
-                });
+                if (vm.patient.latestDiagnosis){
+                    $http.get(diagnosisEndpoint + "/" + vm.patient.latestDiagnosis).then(function(resultDiagnosis) {
+                        vm.patient.latestDiagnosis = resultDiagnosis.data;
+                    }, function(error) {
+                        $log.error("Ocurrió un error al recuperar el diagnóstico del paciente con id " + patientId, error);
+                    });
+                };
 
-                patientFolderName += " - " + vm.patient.name;
+                patientFolderName += " - " + vm.patient._id;
 
                 checkAndCreatePatientFolder().then(function(folder) {
                     vm.folderId = folder.id;

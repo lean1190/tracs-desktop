@@ -23,8 +23,8 @@
 
         // Setea en el localStorage el nombre de la carpeta
         // donde se guardarán los reportes del usuario
-        var TRACS_FOLDER_KEY = "tracs_folder";
-        localStorageService.set(TRACS_FOLDER_KEY, "TRACS - reportes");
+        var TRACS_MAIN_FOLDER_KEY = "tracs_folder";
+        localStorageService.set(TRACS_MAIN_FOLDER_KEY, "TRACS - reportes");
 
         var isGapiClientLoaded = false,
             isGapiCallAuthorized = false,
@@ -33,8 +33,8 @@
                 "https://www.googleapis.com/auth/drive.metadata.readonly"
             ];
 
-        function getTracsFolderName() {
-            return localStorageService.get(TRACS_FOLDER_KEY);
+        function getTracsMainFolderName() {
+            return localStorageService.get(TRACS_MAIN_FOLDER_KEY);
         }
 
         /**
@@ -88,6 +88,7 @@
             });
         }
 
+
         /**
          * Crea una carpeta en el drive de la persona logueada
          * @param   {string}  folderName el nombre de la nueva carpeta
@@ -100,6 +101,7 @@
                     var fileMetadata = {
                         "name": folderName,
                         "mimeType": "application/vnd.google-apps.folder"
+                        //,"parents": ["0B3mM4bmMuWLrQmVIUm9zb3lCSms"]
                     };
 
                     var request = gapi.client.drive.files.create({
@@ -158,21 +160,68 @@
                         requestFolderFiles = gapi.client.drive.files.list({
                             pageSize: 10,
                             q: query,
-                            fields: "nextPageToken, files(id, name, createdTime, modifiedTime, lastModifyingUser, owners)"
+                            fields: "nextPageToken, files(id, name, createdTime, modifiedTime, lastModifyingUser, owners, starred, shared)"
                         });
 
                     requestFolderFiles.execute(function (resp) {
+                        console.log(resp);
                         resolve(resp);
                     });
                 });
             });
+         }
+
+        function getLatestCreatedFileInFolder(folderId){
+
+            return $q(function (resolve) {
+                verifyAuthorization().then(function () {
+                    var query = "'" + folderId + "'" + " in parents and trashed=false",
+                        requestLatestFolderFile = gapi.client.drive.files.list({
+                            orderBy: "createdTime desc",
+                            pageSize: 10,
+                            q: query,
+                            fields: "nextPageToken, files(id)"
+                        });
+
+                    requestLatestFolderFile.execute(function (resp) {
+                        console.log(resp);
+                        resolve(resp);
+                    });
+                });
+            });
+
         }
 
+          function sendPermissionToUser(userEmail, fileId){
+
+            return $q(function (resolve) {
+                verifyAuthorization().then(function () {
+
+                    var query = "fileId = "+"'"+ fileId +"'",
+                        requestSendPermission = gapi.client.drive.permissions.create ({
+                            role: "writer",
+                            emailAddress: userEmail,
+                            type:"user",
+                            fileId: fileId
+                        });
+
+                    requestSendPermission.execute(function (resp) {
+                        console.log(resp);
+                        resolve(resp);
+                    });
+                });
+            });
+
+        }
+
+
         var service = {
-            getTracsFolderName: getTracsFolderName,
+            getTracsMainFolderName: getTracsMainFolderName,
             createDriveFolder: createDriveFolder,
             isFolderCreated: isFolderCreated,
-            getFolderFiles: getFolderFiles
+            getFolderFiles: getFolderFiles,
+            sendPermissionToUser: sendPermissionToUser,
+            getLatestCreatedFileInFolder:getLatestCreatedFileInFolder
         };
 
         return service;

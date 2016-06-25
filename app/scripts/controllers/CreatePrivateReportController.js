@@ -5,9 +5,9 @@
         .module("tracsDesktopApp")
         .controller("CreatePrivateReportController", CreatePrivateReportController);
 
-    CreatePrivateReportController.$inject = ["$stateParams", "$sce"];
+    CreatePrivateReportController.$inject = ["$stateParams", "$sce", "GapiHelper", "environment"];
 
-    function CreatePrivateReportController($stateParams, $sce) {
+    function CreatePrivateReportController($stateParams, $sce, GapiHelper, environment) {
 
         var vm = this;
 
@@ -16,6 +16,15 @@
 
         function activate() {
             vm.newDocUrl = $sce.trustAsResourceUrl(vm.newDocUrl);
+
+            GapiHelper.getLatestCreatedFileInFolder(vm.folderId).then(function(result) {
+                console.log("### Last FIle ID", result);
+            });
+
+            /*GapiHelper.sendPermissionToUser("leian1306@gmail.com","id").then(function(result) {
+                console.log("### se mandaron los permisos", result);
+            });*/
+
         }
 
         activate();

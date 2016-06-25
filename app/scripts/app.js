@@ -65,6 +65,18 @@ angular
             url: "/reports/edit/private/:fileId",
             templateUrl: "views/reports/edit-private.html",
             controller: "EditPrivateReportController as vm"
+        })
+
+        .state("main.newSharedReport", {
+            url: "/reports/new/shared/:folderId",
+            templateUrl: "views/reports/new-shared.html",
+            controller: "CreateSharedReportController as vm"
+        })
+
+        .state("main.editSharedReport", {
+            url: "/reports/edit/shared/:fileId",
+            templateUrl: "views/reports/edit-shared.html",
+            controller: "EditSharedReportController as vm"
         });
 
         $urlRouterProvider.otherwise("/login");
