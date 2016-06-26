@@ -13,10 +13,14 @@
             patientEndpoint = environment.api + "/patient",
             diagnosisEndpoint = environment.api + "/diagnosis",
             patientId = $stateParams.id,
-            patientFolderName = GapiHelper.getTracsMainFolderName();
+            patientFolderName = GapiHelper.getTracsMainFolderName(),
+            parentFolderId = "";
 
         vm.patient = {};
         vm.folderId = "";
+
+        vm.privateFiles=[];
+        vm.sharedFiles =[];
 
         /**
          * Verifica si el usuario tiene en su drive una carpeta
@@ -29,7 +33,7 @@
                 GapiHelper.isFolderCreated(patientFolderName).then(function(result) {
                     // Si no se encontró una carpeta con ese nombre, se crea
                     if (!result.created) {
-                        GapiHelper.createDriveFolder(patientFolderName).then(resolve);
+                        GapiHelper.createDriveFolder(patientFolderName, parentFolderId).then(resolve);
                     } else {
                         resolve(result.files[0]);
                     }
@@ -38,6 +42,7 @@
         }
 
         function activate() {
+
             $http.get(patientEndpoint + "/detail/" + patientId).then(function(result) {
                 vm.patient = result.data;
                 storage.setLastVisitedPatient(vm.patient);
@@ -50,14 +55,37 @@
                     }, function(error) {
                         $log.error("Ocurrió un error al recuperar el diagnóstico del paciente con id " + patientId, error);
                     });
-                };
+                }
+
 
                 patientFolderName += " - " + vm.patient._id;
 
                 checkAndCreatePatientFolder().then(function(folder) {
                     vm.folderId = folder.id;
+
                     GapiHelper.getFolderFiles(folder.id).then(function(result) {
-                        vm.patient.files = result.files;
+
+                        var subFolders = result.files;
+                        console.log("Carpetas",subFolders);
+                        for(var i=0;i<subFolders .length;i++){
+
+                            if (subFolders[i].shared){
+                                GapiHelper.getFolderFiles(subFolders[i].id).then(function(sharedFiles){
+                                    vm.sharedFiles = sharedFiles;
+                                    console.log("informes compartidos",vm.sharedFiles);
+
+                                });
+                            }
+                            else{
+                                GapiHelper.getFolderFiles(subFolders[i].id).then(function(privateFiles){
+                                    vm.privateFiles = privateFiles;
+                                    console.log("informes privados",vm.privateFiles);
+                                });
+                            }
+                        }
+
+                        //vm.patient.files = result.files
+
                         console.log("### patient", vm.patient);
                     });
                 });

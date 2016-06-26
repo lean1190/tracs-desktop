@@ -17,14 +17,19 @@
         .module("tracsDesktopApp")
         .factory("GapiHelper", GapiHelper);
 
-    GapiHelper.$inject = ["$q", "localStorageService", "environment"];
+    GapiHelper.$inject = ["$q", "localStorageService", "environment","$timeout"];
 
-    function GapiHelper($q, localStorageService, environment) {
+    function GapiHelper($q, localStorageService, environment,$timeout) {
 
         // Setea en el localStorage el nombre de la carpeta
         // donde se guardarán los reportes del usuario
-        var TRACS_MAIN_FOLDER_KEY = "tracs_folder";
+        var TRACS_MAIN_FOLDER_KEY = "tracs_folder",
+            TRACS_PRIVATE_FOLDER_KEY ="tracs_private",
+            TRACS_SHARED_FOLDER_KEY = "tracs_shated";
+
         localStorageService.set(TRACS_MAIN_FOLDER_KEY, "TRACS - reportes");
+        localStorageService.set(TRACS_PRIVATE_FOLDER_KEY , "TRACS - privado");
+        localStorageService.set(TRACS_SHARED_FOLDER_KEY, "TRACS - compartido");
 
         var isGapiClientLoaded = false,
             isGapiCallAuthorized = false,
@@ -35,6 +40,12 @@
 
         function getTracsMainFolderName() {
             return localStorageService.get(TRACS_MAIN_FOLDER_KEY);
+        }
+         function getTracsPrivateFolderName() {
+            return localStorageService.get(TRACS_PRIVATE_FOLDER_KEY);
+        }
+         function getTracsSharedFolderName() {
+            return localStorageService.get(TRACS_SHARED_FOLDER_KEY);
         }
 
         /**
@@ -88,21 +99,29 @@
             });
         }
 
-
         /**
          * Crea una carpeta en el drive de la persona logueada
          * @param   {string}  folderName el nombre de la nueva carpeta
          * @returns {promise} una promesa con el resultado de la creación
          */
-        function createDriveFolder(folderName) {
+        function createDriveFolder(folderName, parentId) {
             return $q(function (resolve) {
                 verifyAuthorization().then(function () {
 
-                    var fileMetadata = {
-                        "name": folderName,
-                        "mimeType": "application/vnd.google-apps.folder"
-                        //,"parents": ["0B3mM4bmMuWLrQmVIUm9zb3lCSms"]
-                    };
+                //Este If es para reutilizar el metodo tanto para crear la carpeta principal como para la privada y publica. No encontre forma de hacer opcional el parametro "parents"
+                    if (parentId){
+                        var fileMetadata = {
+                            "name": folderName,
+                            "mimeType": "application/vnd.google-apps.folder",
+                            "parents": [parentId]
+                        };
+                    }
+                    else{
+                        var fileMetadata = {
+                            "name": folderName,
+                            "mimeType": "application/vnd.google-apps.folder"
+                        };
+                    }
 
                     var request = gapi.client.drive.files.create({
                         "resource": fileMetadata,
@@ -115,6 +134,56 @@
                 });
             });
         }
+
+        function sendPermissionToUser(userEmail, fileId){
+
+            return $q(function (resolve) {
+                verifyAuthorization().then(function () {
+
+                    console.log("mail para dar permiso",userEmail);
+
+                    var query = "fileId = "+"'"+ fileId +"'",
+                        requestSendPermission = gapi.client.drive.permissions.create ({
+                            role: "writer",
+                            emailAddress: userEmail,
+                            type:"user",
+                            fileId: fileId
+                        });
+                    requestSendPermission.execute(function (resp) {
+                        console.log(resp);
+                        resolve("sarasa");
+                    });
+                 });
+            });
+        }
+
+        function createDriveSharedFolder(folderName, parentId,profiles) {
+            return $q(function (resolve) {
+                verifyAuthorization().then(function () {
+
+                    var fileMetadata = {
+                            "name": folderName,
+                            "mimeType": "application/vnd.google-apps.folder",
+                            "parents": [parentId]
+                    };
+
+                    var request = gapi.client.drive.files.create({
+                        "resource": fileMetadata,
+                        "fields": "id"
+                    });
+
+                    request.execute(function (file) {
+                        //profiles[1].user.email = "leian1306@gmail.com";
+
+                        angular.forEach(profiles,function(profile){
+                            sendPermissionToUser(profile.user.email, file.id);
+                        });
+                        resolve(file);
+                    });
+                });
+            });
+        }
+
 
         /**
          * Verifica si el usuario logueado tiene una carpeta
@@ -164,7 +233,7 @@
                         });
 
                     requestFolderFiles.execute(function (resp) {
-                        console.log(resp);
+
                         resolve(resp);
                     });
                 });
@@ -192,36 +261,20 @@
 
         }
 
-          function sendPermissionToUser(userEmail, fileId){
 
-            return $q(function (resolve) {
-                verifyAuthorization().then(function () {
-
-                    var query = "fileId = "+"'"+ fileId +"'",
-                        requestSendPermission = gapi.client.drive.permissions.create ({
-                            role: "writer",
-                            emailAddress: userEmail,
-                            type:"user",
-                            fileId: fileId
-                        });
-
-                    requestSendPermission.execute(function (resp) {
-                        console.log(resp);
-                        resolve(resp);
-                    });
-                });
-            });
-
-        }
 
 
         var service = {
+
             getTracsMainFolderName: getTracsMainFolderName,
+            getTracsPrivateFolderName:getTracsPrivateFolderName,
+            getTracsSharedFolderName:getTracsSharedFolderName,
             createDriveFolder: createDriveFolder,
             isFolderCreated: isFolderCreated,
             getFolderFiles: getFolderFiles,
             sendPermissionToUser: sendPermissionToUser,
-            getLatestCreatedFileInFolder:getLatestCreatedFileInFolder
+            getLatestCreatedFileInFolder:getLatestCreatedFileInFolder,
+            createDriveSharedFolder:createDriveSharedFolder
         };
 
         return service;

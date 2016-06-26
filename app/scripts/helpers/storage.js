@@ -52,6 +52,8 @@
             return localStorageService.set(LAST_VISITED_PATIENT_KEY, lastVisitedPatient);
         }
 
+
+
     }
 
 })();
