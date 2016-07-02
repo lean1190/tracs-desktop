@@ -66,27 +66,23 @@
                     GapiHelper.getFolderFiles(folder.id).then(function(result) {
 
                         var subFolders = result.files;
-                        console.log("Carpetas",subFolders);
+                        console.log("### Carpetas",subFolders);
                         for(var i=0;i<subFolders .length;i++){
 
                             if (subFolders[i].shared){
                                 GapiHelper.getFolderFiles(subFolders[i].id).then(function(sharedFiles){
                                     vm.sharedFiles = sharedFiles;
-                                    console.log("informes compartidos",vm.sharedFiles);
+                                    console.log("### informes compartidos",vm.sharedFiles);
 
                                 });
                             }
                             else{
                                 GapiHelper.getFolderFiles(subFolders[i].id).then(function(privateFiles){
                                     vm.privateFiles = privateFiles;
-                                    console.log("informes privados",vm.privateFiles);
+                                    console.log("### informes privados",vm.privateFiles);
                                 });
                             }
                         }
-
-                        //vm.patient.files = result.files
-
-                        console.log("### patient", vm.patient);
                     });
                 });
 
