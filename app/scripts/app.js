@@ -18,6 +18,7 @@ angular
         "ngTouch",
         "ui.router",
         "LocalStorageModule",
+        "qImproved"
     ])
     .constant("environment", {
         api: "http://localhost:3000",

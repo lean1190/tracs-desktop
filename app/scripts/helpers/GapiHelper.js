@@ -10,25 +10,25 @@
  * de autorización como de invocación de métodos
  */
 
-(function () {
+(function() {
     "use strict";
 
     angular
         .module("tracsDesktopApp")
         .factory("GapiHelper", GapiHelper);
 
-    GapiHelper.$inject = ["$q", "localStorageService", "environment","$timeout"];
+    GapiHelper.$inject = ["$q", "localStorageService", "environment"];
 
-    function GapiHelper($q, localStorageService, environment,$timeout) {
+    function GapiHelper($q, localStorageService, environment) {
 
         // Setea en el localStorage el nombre de la carpeta
         // donde se guardarán los reportes del usuario
         var TRACS_MAIN_FOLDER_KEY = "tracs_folder",
-            TRACS_PRIVATE_FOLDER_KEY ="tracs_private",
+            TRACS_PRIVATE_FOLDER_KEY = "tracs_private",
             TRACS_SHARED_FOLDER_KEY = "tracs_shated";
 
         localStorageService.set(TRACS_MAIN_FOLDER_KEY, "TRACS - reportes");
-        localStorageService.set(TRACS_PRIVATE_FOLDER_KEY , "TRACS - privado");
+        localStorageService.set(TRACS_PRIVATE_FOLDER_KEY, "TRACS - privado");
         localStorageService.set(TRACS_SHARED_FOLDER_KEY, "TRACS - compartido");
 
         var isGapiClientLoaded = false,
@@ -41,10 +41,12 @@
         function getTracsMainFolderName() {
             return localStorageService.get(TRACS_MAIN_FOLDER_KEY);
         }
-         function getTracsPrivateFolderName() {
+
+        function getTracsPrivateFolderName() {
             return localStorageService.get(TRACS_PRIVATE_FOLDER_KEY);
         }
-         function getTracsSharedFolderName() {
+
+        function getTracsSharedFolderName() {
             return localStorageService.get(TRACS_SHARED_FOLDER_KEY);
         }
 
@@ -53,7 +55,7 @@
          * @returns {promise} una promesa cuando se terminó de cargar
          */
         function loadDriveApi() {
-            return gapi.client.load("drive", "v3").then(function () {
+            return gapi.client.load("drive", "v3").then(function() {
                 isGapiClientLoaded = true;
                 return true;
             });
@@ -64,12 +66,12 @@
          * @returns {promise} una promesa cuando se autorizó correctamente
          */
         function authorizeApiCall() {
-            return $q(function (resolve, reject) {
+            return $q(function(resolve, reject) {
                 gapi.auth.authorize({
                     "client_id": clientId,
                     "scope": scopes.join(" "),
                     "immediate": true
-                }, function (authResult) {
+                }, function(authResult) {
                     if (authResult && !authResult.error) {
                         isGapiCallAuthorized = true;
                         resolve(authResult);
@@ -85,11 +87,11 @@
          * para ejecutar la acción, y autoriza la llamada
          */
         function verifyAuthorization() {
-            return $q(function (resolve) {
+            return $q(function(resolve) {
                 // Si la Gapi no está cargada las llamadas tampoco están autorizadas, hacer ambas
                 if (!isGapiClientLoaded) {
-                    loadDriveApi().then(function () {
-                        authorizeApiCall().then(function () {
+                    loadDriveApi().then(function() {
+                        authorizeApiCall().then(function() {
                             resolve(true);
                         });
                     });
@@ -105,19 +107,18 @@
          * @returns {promise} una promesa con el resultado de la creación
          */
         function createDriveFolder(folderName, parentId) {
-            return $q(function (resolve) {
-                verifyAuthorization().then(function () {
-
-                //Este If es para reutilizar el metodo tanto para crear la carpeta principal como para la privada y publica. No encontre forma de hacer opcional el parametro "parents"
-                    if (parentId){
-                        var fileMetadata = {
+            return $q(function(resolve) {
+                verifyAuthorization().then(function() {
+                    var fileMetadata = {};
+                    //Este If es para reutilizar el metodo tanto para crear la carpeta principal como para la privada y publica. No encontre forma de hacer opcional el parametro "parents"
+                    if (parentId) {
+                        fileMetadata = {
                             "name": folderName,
                             "mimeType": "application/vnd.google-apps.folder",
                             "parents": [parentId]
                         };
-                    }
-                    else{
-                        var fileMetadata = {
+                    } else {
+                        fileMetadata = {
                             "name": folderName,
                             "mimeType": "application/vnd.google-apps.folder"
                         };
@@ -128,12 +129,13 @@
                         "fields": "id"
                     });
 
-                    request.execute(function (file) {
+                    request.execute(function(file) {
                         resolve(file);
                     });
                 });
             });
         }
+
 
         /**
          * Envia los permisos a un participante del paciente
@@ -141,24 +143,21 @@
          * @param   {string}  fileId    id del file que se va a compartir
          * @returns {promise} una promesa con el resultado de la operación
          */
-        function sendPermissionToUser(userEmail, fileId){
+        function sendPermissionToUser(userEmail, fileId) {
+            return $q(function(resolve) {
+                verifyAuthorization().then(function() {
 
-            return $q(function (resolve) {
-                verifyAuthorization().then(function () {
-
-
-
-                    var query = "fileId = "+"'"+ fileId +"'",
-                        requestSendPermission = gapi.client.drive.permissions.create ({
+                    var query = "fileId = " + "'" + fileId + "'",
+                        requestSendPermission = gapi.client.drive.permissions.create({
                             role: "writer",
                             emailAddress: userEmail,
-                            type:"user",
+                            type: "user",
                             fileId: fileId
                         });
-                    requestSendPermission.execute(function (resp) {
-                        resolve("sarasa");
+                    requestSendPermission.execute(function(resp) {
+                        resolve();
                     });
-                 });
+                });
             });
         }
 
@@ -169,15 +168,14 @@
          * @param   {array}   profiles   información de los participantes del tratamiento
          * @returns {promise} una promesa con el id de la carpeta creada
          */
-
-        function createDriveSharedFolder(folderName, parentId,profiles) {
+        function createDriveSharedFolder(folderName, parentId,profiles, folderOwner) {
             return $q(function (resolve) {
                 verifyAuthorization().then(function () {
 
                     var fileMetadata = {
-                            "name": folderName,
-                            "mimeType": "application/vnd.google-apps.folder",
-                            "parents": [parentId]
+                        "name": folderName,
+                        "mimeType": "application/vnd.google-apps.folder",
+                        "parents": [parentId]
                     };
 
                     var request = gapi.client.drive.files.create({
@@ -185,14 +183,18 @@
                         "fields": "id"
                     });
 
-                    request.execute(function (file) {
-
-
-                        angular.forEach(profiles,function(profile){
-                            if (!profile.user.isParent){
-                                sendPermissionToUser(profile.user.email, file.id);
+                    request.execute(function(file) {
+                        var tasks = [];
+                        angular.forEach(profiles, function(profile) {
+                            if((profile.user._id != folderOwner) && !(profile.isParent )){
+                                var task = function() {
+                                    console.log("### Compartiendo carpeta con el mail", profile.user.email);
+                                    return sendPermissionToUser(profile.user.email, file.id);
+                                };
+                                tasks.push(task);
                             }
                         });
+                        $q.serial(tasks);
                         resolve(file);
                     });
                 });
@@ -206,15 +208,16 @@
          * @returns {promise} una promesa con las carpetas y result
          */
         function isFolderCreated(folderName) {
-            return $q(function (resolve) {
-                verifyAuthorization().then(function () {
+            return $q(function(resolve) {
+                verifyAuthorization().then(function() {
                     var query = "name='" + folderName + "'and trashed=false",
                         requestParentId = gapi.client.drive.files.list({
                             pageSize: 10,
                             q: query,
                             fields: "nextPageToken, files(id, name, parents)"
                         });
-                    requestParentId.execute(function (resp) {
+
+                    requestParentId.execute(function(resp) {
                         var responseObject = {
                             created: false,
                             files: resp.files
@@ -234,8 +237,8 @@
          * @returns {promise} una promesa con el arreglo de documentos
          */
         function getFolderFiles(folderId) {
-            return $q(function (resolve) {
-                verifyAuthorization().then(function () {
+            return $q(function(resolve) {
+                verifyAuthorization().then(function() {
                     var query = "'" + folderId + "'" + " in parents and trashed=false",
                         requestFolderFiles = gapi.client.drive.files.list({
                             pageSize: 10,
@@ -243,13 +246,13 @@
                             fields: "nextPageToken, files(id, name, createdTime, modifiedTime, lastModifyingUser, owners, starred, shared)"
                         });
 
-                    requestFolderFiles.execute(function (resp) {
+                    requestFolderFiles.execute(function(resp) {
 
                         resolve(resp);
                     });
                 });
             });
-         }
+        }
 
         /**
          * Obtiene el id de un archivo/carpeta a partir de su nombre
@@ -259,7 +262,7 @@
         function getFileId (fileName){
             return $q(function (resolve) {
                 verifyAuthorization().then(function () {
-                    //var query = "'" + folderId + "'" + " in parents and trashed=false",
+                    console.log(fileName);
                     var query = "name= '"+fileName + "' and trashed=false",
                         requestFolderFiles = gapi.client.drive.files.list({
                             pageSize: 10,
@@ -267,6 +270,7 @@
                             fields: "nextPageToken, files(id)"
                         });
                     requestFolderFiles.execute(function (resp) {
+                        console.log("resp del getFIleId",resp);
                         resolve(resp);
                     });
                 });
@@ -278,25 +282,25 @@
             return $q(function (resolve) {
                 verifyAuthorization().then(function () {
                     getFileId(folderName).then(function(result){
-                        var fileId = result.files[0].id;
-                        var query = "'" + fileId + "'" + " in parents and trashed=false",
+                        if (result.files.length!=0){
+                            var fileId = result.files[0].id;
+                            var query = "'" + fileId + "'" + " in parents and trashed=false",
 
-                            requestFolderFiles = gapi.client.drive.files.list({
-                                pageSize: 10,
-                                q: query,
-                                fields: "nextPageToken, files(id, name, createdTime, modifiedTime, lastModifyingUser, owners, starred, shared)"
+                                requestFolderFiles = gapi.client.drive.files.list({
+                                    pageSize: 10,
+                                    q: query,
+                                    fields: "nextPageToken, files(id, name, createdTime, modifiedTime, lastModifyingUser, owners, starred, shared)"
+                                });
+
+                            requestFolderFiles.execute(function (resp) {
+                                resolve(resp);
                             });
-
-                        requestFolderFiles.execute(function (resp) {
-                            resolve(resp);
-                        });
+                        }
                     });
 
                 });
             });
         }
-
-
 
         /**
          * Trae el ultimo archivo creado. Creo que se podria borrar, lo hice mas que nada para hacer el guardado en la base. A discutir
@@ -306,8 +310,8 @@
 
         function getLatestCreatedFileInFolder(folderId){
 
-            return $q(function (resolve) {
-                verifyAuthorization().then(function () {
+            return $q(function(resolve) {
+                verifyAuthorization().then(function() {
                     var query = "'" + folderId + "'" + " in parents and trashed=false",
                         requestLatestFolderFile = gapi.client.drive.files.list({
                             orderBy: "createdTime desc",
@@ -335,8 +339,8 @@
             getFolderFiles: getFolderFiles,
             getSharedFolderFiles:getSharedFolderFiles,
             sendPermissionToUser: sendPermissionToUser,
-            getLatestCreatedFileInFolder:getLatestCreatedFileInFolder,
-            createDriveSharedFolder:createDriveSharedFolder
+            getLatestCreatedFileInFolder: getLatestCreatedFileInFolder,
+            createDriveSharedFolder: createDriveSharedFolder
         };
 
         return service;
