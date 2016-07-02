@@ -28,15 +28,8 @@
                     // Si no se encontró una carpeta con ese nombre, se crea
                     if (!result.created) {
                         GapiHelper.createDriveSharedFolder(patientSharedFolderName, parentFolderId, vm.profiles).then(resolve);
-                        //GapiHelper.createDriveFolder(patientSharedFolderName, parentFolderId).then(resolve);
                     } else {
-
-                        /*for (var i=0; i<vm.profiles.length; i++){
-                            GapiHelper.sendPermissionToUser(vm.profiles[i].user.email,folder.id);
-                        }*/
-                        console.log("emtre al else");
                         resolve(result.files[0]);
-                        console.log(result.files[0]);
                     }
                 });
             });
@@ -64,9 +57,6 @@
 
             });
 
-            /*GapiHelper.sendPermissionToUser("leian1306@gmail.com","id").then(function(result) {
-                console.log("### se mandaron los permisos", result);
-            });*/
         }
 
         activate();

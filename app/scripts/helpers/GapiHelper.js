@@ -135,12 +135,18 @@
             });
         }
 
+        /**
+         * Envia los permisos a un participante del paciente
+         * @param   {string}  userEmail el usuario del paricipante al que se le va a entregar el permiso
+         * @param   {string}  fileId    id del file que se va a compartir
+         * @returns {promise} una promesa con el resultado de la operación
+         */
         function sendPermissionToUser(userEmail, fileId){
 
             return $q(function (resolve) {
                 verifyAuthorization().then(function () {
 
-                    console.log("mail para dar permiso",userEmail);
+
 
                     var query = "fileId = "+"'"+ fileId +"'",
                         requestSendPermission = gapi.client.drive.permissions.create ({
@@ -150,12 +156,19 @@
                             fileId: fileId
                         });
                     requestSendPermission.execute(function (resp) {
-                        console.log(resp);
                         resolve("sarasa");
                     });
                  });
             });
         }
+
+        /**
+         * Crea una carpeta compartida con todos los participantes del tratamiento del paciente excluyendo a los padres
+         * @param   {string}  folderName nombre de la carpeta a crear
+         * @param   {string}  parentId   id de la carpeta raiz que almacena los archivos relacionados a la aplicacion
+         * @param   {array}   profiles   información de los participantes del tratamiento
+         * @returns {promise} una promesa con el id de la carpeta creada
+         */
 
         function createDriveSharedFolder(folderName, parentId,profiles) {
             return $q(function (resolve) {
@@ -173,17 +186,18 @@
                     });
 
                     request.execute(function (file) {
-                        //profiles[1].user.email = "leian1306@gmail.com";
+
 
                         angular.forEach(profiles,function(profile){
-                            sendPermissionToUser(profile.user.email, file.id);
+                            if (!profile.user.isParent){
+                                sendPermissionToUser(profile.user.email, file.id);
+                            }
                         });
                         resolve(file);
                     });
                 });
             });
         }
-
 
         /**
          * Verifica si el usuario logueado tiene una carpeta
@@ -200,17 +214,14 @@
                             q: query,
                             fields: "nextPageToken, files(id, name, parents)"
                         });
-
                     requestParentId.execute(function (resp) {
                         var responseObject = {
                             created: false,
                             files: resp.files
                         };
-
                         if (resp.files.length > 0) {
                             responseObject.created = true;
                         }
-
                         resolve(responseObject);
                     });
                 });
@@ -240,6 +251,59 @@
             });
          }
 
+        /**
+         * Obtiene el id de un archivo/carpeta a partir de su nombre
+         * @param   {string} fileName nombre del archivo del cual se quiere obtener el ID
+         * @returns {promise} una promesa con el id del archivo requerido
+         */
+        function getFileId (fileName){
+            return $q(function (resolve) {
+                verifyAuthorization().then(function () {
+                    //var query = "'" + folderId + "'" + " in parents and trashed=false",
+                    var query = "name= '"+fileName + "' and trashed=false",
+                        requestFolderFiles = gapi.client.drive.files.list({
+                            pageSize: 10,
+                            q: query,
+                            fields: "nextPageToken, files(id)"
+                        });
+                    requestFolderFiles.execute(function (resp) {
+                        resolve(resp);
+                    });
+                });
+            });
+        }
+
+        function getSharedFolderFiles(folderName){
+
+            return $q(function (resolve) {
+                verifyAuthorization().then(function () {
+                    getFileId(folderName).then(function(result){
+                        var fileId = result.files[0].id;
+                        var query = "'" + fileId + "'" + " in parents and trashed=false",
+
+                            requestFolderFiles = gapi.client.drive.files.list({
+                                pageSize: 10,
+                                q: query,
+                                fields: "nextPageToken, files(id, name, createdTime, modifiedTime, lastModifyingUser, owners, starred, shared)"
+                            });
+
+                        requestFolderFiles.execute(function (resp) {
+                            resolve(resp);
+                        });
+                    });
+
+                });
+            });
+        }
+
+
+
+        /**
+         * Trae el ultimo archivo creado. Creo que se podria borrar, lo hice mas que nada para hacer el guardado en la base. A discutir
+         * @param   {string}  folderId id de la carpeta de la cual se quiere obtener el ultimo archivo creado
+         * @returns {promise} una promesa con el ultimo archivo que fue creado
+         */
+
         function getLatestCreatedFileInFolder(folderId){
 
             return $q(function (resolve) {
@@ -253,7 +317,6 @@
                         });
 
                     requestLatestFolderFile.execute(function (resp) {
-                        console.log(resp);
                         resolve(resp);
                     });
                 });
@@ -261,17 +324,16 @@
 
         }
 
-
-
-
         var service = {
 
             getTracsMainFolderName: getTracsMainFolderName,
             getTracsPrivateFolderName:getTracsPrivateFolderName,
             getTracsSharedFolderName:getTracsSharedFolderName,
+            getFileId: getFileId,
             createDriveFolder: createDriveFolder,
             isFolderCreated: isFolderCreated,
             getFolderFiles: getFolderFiles,
+            getSharedFolderFiles:getSharedFolderFiles,
             sendPermissionToUser: sendPermissionToUser,
             getLatestCreatedFileInFolder:getLatestCreatedFileInFolder,
             createDriveSharedFolder:createDriveSharedFolder
