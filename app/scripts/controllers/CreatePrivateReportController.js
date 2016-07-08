@@ -31,20 +31,13 @@
         }
 
         function activate() {
-
             vm.patient = storage.getLastVisitedPatient();
             patientPrivateFolderName += " - " + vm.patient._id;
             checkAndCreatePatientFolder().then(function(folder) {
-
                 vm.privateFolderId = folder.id;
                 vm.newDocUrl = "https://docs.google.com/document/create?usp=drive_web&folder=" + vm.privateFolderId;
                 vm.newDocUrl = $sce.trustAsResourceUrl(vm.newDocUrl);
-
             });
-
-            /* GapiHelper.getLatestCreatedFileInFolder(vm.folderId).then(function(result) {
-                console.log("### Last FIle ID", result);
-            });*/
         }
 
         activate();

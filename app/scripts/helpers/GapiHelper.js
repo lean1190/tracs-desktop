@@ -262,7 +262,6 @@
         function getFileId (fileName){
             return $q(function (resolve) {
                 verifyAuthorization().then(function () {
-                    console.log(fileName);
                     var query = "name= '"+fileName + "' and trashed=false",
                         requestFolderFiles = gapi.client.drive.files.list({
                             pageSize: 10,
@@ -270,7 +269,6 @@
                             fields: "nextPageToken, files(id)"
                         });
                     requestFolderFiles.execute(function (resp) {
-                        console.log("resp del getFIleId",resp);
                         resolve(resp);
                     });
                 });

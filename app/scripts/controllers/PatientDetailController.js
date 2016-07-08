@@ -64,18 +64,14 @@
 
 
                 checkAndCreatePatientFolder().then(function(folder) {
-
                     vm.folderId = folder.id;
 
                     GapiHelper.getFolderFiles(folder.id).then(function(result) {
                         var subFolders = result.files;
-                        console.log("### Carpetas",subFolders);
                         for(var i=0;i<subFolders .length;i++){
-
                             if (subFolders[i].shared === false){
                                 GapiHelper.getFolderFiles(subFolders[i].id).then(function(privateFiles){
                                     vm.privateFiles = privateFiles;
-                                    console.log("Informes privados",vm.privateFiles);
                                 });
                             }
                         }
@@ -84,11 +80,8 @@
                     patientSharedFolderName += " - " + vm.patient._id;
 
                     GapiHelper.getSharedFolderFiles(patientSharedFolderName).then(function(sharedFiles){
-                        console.log("Informes compartidos",sharedFiles);
                         vm.sharedFiles = sharedFiles;
-
                     });
-                        console.log("### patient", vm.patient);
                 });
 
         }, function(error) {
